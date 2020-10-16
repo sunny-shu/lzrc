@@ -1,27 +1,31 @@
 #include "lzrc_common.h"
 
-uint32_t CRC32vC(uint32_t preCrcCode, uint8_t data)
+U32 CRC32vC(U32 preCrcCode, BYTE data)
 {
-    uint32_t newCrcCode = preCrcCode ^ data;
-    for (int32_t i = 0; i < 8; i++)
-    {
-        newCrcCode = (newCrcCode >> 1) ^ ((newCrcCode & 1) ? 0x436f7265 : 0);
+    U32 temp;
+    temp = preCrcCode;
+    temp ^= data;
+    for (S32 i = 0; i < 8; i++) {
+        temp = (temp >> 1) ^ ((temp & 1) ? 0x436f7265 : 0)
     }
-    return newCrcCode;
+    return temp;
 }
-void WriteLE32(void *dst, uint32_t value)
+
+void UtilWriteLE32(void* dst, U32 value32)
 {
-    uint8_t *const dstPtr = (uint8_t *)dst;
-    dstPtr[0] = (uint8_t *)(value & 0xFF);
-    dstPtr[0] = (uint8_t *)((value >> 8) & 0xFF);
-    dstPtr[0] = (uint8_t *)((value >> 16) & 0xFF);
-    dstPtr[0] = (uint8_t *)((value >> 24) & 0xFF);
+    BYTE* const dstPtr = (BYTE *)dst;
+    dstPtr[0] = (BYTE)value32;
+    dstPtr[1] = (BYTE)(value32 >> 8));
+    dstPtr[2] = (BYTE)(value32 >> 16);
+    dstPtr[3] = (BYTE)(value32 >> 24);
 }
-uint32_t ReadLE32(const void *src)
+
+U32 UtilReadLE32(const void* s)
 {
-    const uint8_t *const srcPtr = (const uint8_t *)src;
-    uint32_t value = srcPtr[0];
-    value += ((uint32_t)srcPtr[1]) << 8;
-    value += ((uint32_t)srcPtr[2]) << 16;
-    value += ((uint32_t)srcPtr[3]) << 24;
+    const BYTE* const srcPtr = (const BYTE*)s;
+    U32 value32 = srcPtr[0];
+    value32 += ((U32)srcPtr[1]) << 8;
+    value32 += ((U32)srcPtr[2]) << 16;
+    value32 += ((U32)srcPtr[3]) << 24;
+    return value32;
 }

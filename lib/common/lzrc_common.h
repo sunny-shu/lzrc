@@ -1,17 +1,27 @@
-#include <stdint.h>
+#ifndef LZRC_COMMON_H
+#define LZRC_COMMON_H
+#include "lzrc_data_type.h"
 
-#ifndef RC_ENCODE_H
-#define RC_ENCODE_H
+#define expect(expr, value)   (__builtin_expect ((expr), (value)) )
+
+#ifndef likely
+#define likely(expr)   expect((expr) != 0, 1)
+#endif
+#ifndef unlikely
+#define unlikely(expr)   expect((expr) != 0, 0)
+#endif
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-uint32_t CRC32vC(uint32_t preCrcCode, uint8_t data);
-void WriteLE32(void *dst, uint32_t value);
-uint32_t ReadLE32(const void *ptr);
+
+U32 CRC32vC(U32 crcCode, BYTE data);
+void UtilWriteLE32(void *dst, U32 value32);
+U32 UtilReadLE32(const void *s);
 
 #ifdef __cplusplus
 }
 #endif
+
 #endif

@@ -1,15 +1,16 @@
 #include <stdint.h>
 
-#ifndef RC_ENCODE_H
-#define RC_ENCODE_H
+#ifndef RANGECODE_ENCODE_H
+#define RANGECODE_ENCODE_H
+#include "rangecode_common.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-int32_t RCEncodeOneElement();
 
-int32_t EndRCEncode();
+S32 RCEncodeOneElement(RangeCodeContex *contex, OutputStream *outputStream, U32 element, FreqTable *table);
 
+S32 EndRCEncode(RangeCodeContex *contex, OutputStream *outputStream);
 
 #ifdef __cplusplus
 }
