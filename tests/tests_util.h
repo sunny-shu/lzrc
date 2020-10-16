@@ -1,20 +1,6 @@
 #ifndef TEST_UTIL_H
 #define TEST_UTIL_H
 
-#define FCLOSE(fp) do { \
-    if (fp != NULL) { \
-        fclose(fp); \
-        fp = NULL; \
-    } \
-} while (0)
-
-#define FREE(fp) do { \
-    if (fp != NULL) { \
-        free(fp); \
-        fp = NULL; \
-    } \
-} while (0)
-
 // 文件压缩解压
 void LzrcFileTest(const char *fileName, int strategy);
 
