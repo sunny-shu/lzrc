@@ -182,16 +182,16 @@ void DestroyLzrcStreamDecodeContex(LzrcStreamDecodeContex *contex)
     free(contex);
 }
 
-void DecodeLiteralLen(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream, BlockStyle blockStyle)
+void DecodeLiteralLen(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream)
 {
     U32 decodeNum;
     LZ77_TRIAD *triplet = &lzrcContex->triplet;
     RangeCodeContex *rangeCodeContex = &lzrcContex->decodeContex;
     if (rangeCodeContex->rangeCodeState == FINISH_DECODE) {
-        RCHandleDelayBitsInDecoding(rangeCodeContex, inputStream, blockStyle);
+        RCHandleDelayBitsInDecoding(rangeCodeContex, inputStream, lzrcContex->blockStyle);
     }
     if (rangeCodeContex->rangeCodeState == FINISH_HANDLE_DELAY_BIT) {
-        decodeNum = RCDecodeElement(rangeCodeContex, inputStream, &lzrcContex->literalLenFreqTable, blockStyle);
+        decodeNum = RCDecodeElement(rangeCodeContex, inputStream, &lzrcContex->literalLenFreqTable, lzrcContex->blockStyle);
         if (rangeCodeContex->rangeCodeState == FINISH_DECODE) {
             triplet->unmatchLen += decodeNum;
             if (decodeNum < UNSIGNED_CHAR_MAX_VALUE) {
@@ -203,18 +203,17 @@ void DecodeLiteralLen(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStre
     }
 }
 
-void DecodeLiteral(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream, ByteOutputStream *out,
-                   BlockStyle blockStyle)
+void DecodeLiteral(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream, ByteOutputStream *out)
 {
     BYTE decodeNum;
 
     RangeCodeContex *rangecodeContex = &lzrcContex->decodeContex;
     if (rangecodeContex->rangeCodeState == FINISH_DECODE) {
-        RCHandleDelayBitsInDecoding(rangecodeContex, inputStream, blockStyle);
+        RCHandleDelayBitsInDecoding(rangecodeContex, inputStream, lzrcContex->blockStyle);
     }
 
     if (rangecodeContex->rangeCodeState == FINISH_HANDLE_DELAY_BIT) {
-        decodeNum = RCDecodeElement(rangecodeContex, inputStream, &lzrcContex->literalFreqTable, blockStyle);
+        decodeNum = RCDecodeElement(rangecodeContex, inputStream, &lzrcContex->literalFreqTable, lzrcContex->blockStyle);
         if (rangecodeContex->rangeCodeState == FINISH_DECODE) {
             lzrcContex->literalNotDecodeCount--;
             if (lzrcContex->literalNotDecodeCount == 0) {
@@ -227,16 +226,16 @@ void DecodeLiteral(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream,
     }
 }
 
-void DecodeMatchLen(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream, BlockStyle blockStyle)
+void DecodeMatchLen(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream)
 {
     U32 decodeNum;
     LZ77_TRIAD *triplet = &lzrcContex->triplet;
     RangeCodeContex *rangecodeContex = &lzrcContex->decodeContex;
     if (rangecodeContex->rangeCodeState == FINISH_DECODE) {
-        RCHandleDelayBitsInDecoding(rangecodeContex, inputStream, blockStyle);
+        RCHandleDelayBitsInDecoding(rangecodeContex, inputStream, lzrcContex->blockStyle);
     }
     if (rangecodeContex->rangeCodeState == FINISH_HANDLE_DELAY_BIT) {
-        decodeNum = RCDecodeElement(rangecodeContex, inputStream, &lzrcContex->matchLenFreqTable, blockStyle);
+        decodeNum = RCDecodeElement(rangecodeContex, inputStream, &lzrcContex->matchLenFreqTable, lzrcContex->blockStyle);
         if (rangecodeContex->rangeCodeState == FINISH_DECODE) {
             triplet->matchLen += decodeNum;
             if (decodeNum < UNSIGNED_CHAR_MAX_VALUE) {
@@ -246,16 +245,16 @@ void DecodeMatchLen(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream
     }
 }
 
-void DecodeOffsetHighByte(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream, BlockStyle blockStyle)
+void DecodeOffsetHighByte(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream)
 {
     U32 decodeNum;
     LZ77_TRIAD *triplet = &lzrcContex->triplet;
     RangeCodeContex *rangecodeContex = &lzrcContex->decodeContex;
     if (rangecodeContex->rangeCodeState == FINISH_DECODE) {
-        RCHandleDelayBitsInDecoding(rangecodeContex, inputStream, blockStyle);
+        RCHandleDelayBitsInDecoding(rangecodeContex, inputStream, lzrcContex->blockStyle);
     }
     if (rangecodeContex->rangeCodeState == FINISH_HANDLE_DELAY_BIT) {
-        decodeNum = RCDecodeElement(rangecodeContex, inputStream, &lzrcContex->offSetHighBYTEFreqTable, blockStyle);
+        decodeNum = RCDecodeElement(rangecodeContex, inputStream, &lzrcContex->offSetHighBYTEFreqTable, lzrcContex->blockStyle);
         if (rangecodeContex->rangeCodeState == FINISH_DECODE) {
             triplet->offset += decodeNum << UNSIGNED_CHAR_BIT_COUNT;
             lzrcContex->lzrcState = DECODING_OFFSET_LOW_BYTE;
@@ -263,16 +262,16 @@ void DecodeOffsetHighByte(LzrcStreamDecodeContex *lzrcContex, InputStream *input
     }
 }
 
-void DecodeOffsetLowByte(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream, BlockStyle blockStyle)
+void DecodeOffsetLowByte(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStream)
 {
     U32 decodeNum;
     LZ77_TRIAD *triplet = &lzrcContex->triplet;
     RangeCodeContex *rangecodeContex = &lzrcContex->decodeContex;
     if (rangecodeContex->rangeCodeState == FINISH_DECODE) {
-        RCHandleDelayBitsInDecoding(rangecodeContex, inputStream, blockStyle);
+        RCHandleDelayBitsInDecoding(rangecodeContex, inputStream, lzrcContex->blockStyle);
     }
     if (rangecodeContex->rangeCodeState == FINISH_HANDLE_DELAY_BIT) {
-        decodeNum = RCDecodeElement(rangecodeContex, inputStream, &lzrcContex->offSetLowFreqTable, blockStyle);
+        decodeNum = RCDecodeElement(rangecodeContex, inputStream, &lzrcContex->offSetLowFreqTable, lzrcContex->blockStyle);
         if (rangecodeContex->rangeCodeState == FINISH_DECODE) {
             triplet->offset += decodeNum;
             lzrcContex->lzrcState = DECODING_LITERAL_LEN;
@@ -358,19 +357,19 @@ S32 lzrcStreamDecode(LzrcStreamDecodeContex *lzrcContex, BYTE *in, U32 inSize, B
     while (1) {
         switch (lzrcContex->lzrcState) {
             case DECODING_LITERAL_LEN:
-                DecodeLiteralLen(lzrcContex, &inputStream, lzrcContex->blockStyle);
+                DecodeLiteralLen(lzrcContex, &inputStream);
                 break;
             case DECODING_LITERAL:
-                DecodeLiteral(lzrcContex, &inputStream, &output, lzrcContex->blockStyle);
+                DecodeLiteral(lzrcContex, &inputStream, &output);
                 break;
             case DECODING_MATCH_LEN:
-                DecodeMatchLen(lzrcContex, &inputStream, lzrcContex->blockStyle);
+                DecodeMatchLen(lzrcContex, &inputStream);
                 break;
             case DECODING_OFFSET_HIGH_BYTE:
-                DecodeOffsetHighByte(lzrcContex, &inputStream, lzrcContex->blockStyle);
+                DecodeOffsetHighByte(lzrcContex, &inputStream);
                 break;
             case DECODING_OFFSET_LOW_BYTE:
-                DecodeOffsetLowByte(lzrcContex, &inputStream, lzrcContex->blockStyle);
+                DecodeOffsetLowByte(lzrcContex, &inputStream);
                 break;
         }
         if (lzrcContex->tripletIsReady == READY) {
