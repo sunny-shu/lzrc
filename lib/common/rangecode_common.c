@@ -53,7 +53,7 @@ U32 ReadBits(S32 bitCount, InputStream *inputStream)
                 inputStream->byteCache = 0;
                 inputStream->bitPos = UNSIGNED_CHAR_BIT_COUNT;
             } else {
-                inputStream->byteCache = inputStream->input[inputStream->inputPos]
+                inputStream->byteCache = inputStream->input[inputStream->inputPos];
                 inputStream->inputPos++;
                 inputStream->bitPos = UNSIGNED_CHAR_BIT_COUNT;
             }

@@ -190,7 +190,7 @@ void DecodeLiteralLen(LzrcStreamDecodeContex *lzrcContex, InputStream *inputStre
     if (rangeCodeContex->rangeCodeState == FINISH_DECODE) {
         RCHandleDelayBitsInDecoding(rangeCodeContex, inputStream, blockStyle);
     }
-    if (rangeCodeContex->rangeCodeState == FINISH_HANDLE_DELAY_BITS) {
+    if (rangeCodeContex->rangeCodeState == FINISH_HANDLE_DELAY_BIT) {
         decodeNum = RCDecodeElement(rangeCodeContex, inputStream, &lzrcContex->literalLenFreqTable, blockStyle);
         if (rangeCodeContex->rangeCodeState == FINISH_DECODE) {
             triplet->unmatchLen += decodeNum;

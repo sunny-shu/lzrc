@@ -1,6 +1,6 @@
-PROJECT(main)
+cmake_minimum_required(VERSION 2.6)
 
-CMAKE_MININUM_REQUIRED(VERSION 2.6)
+PROJECT(main)
 
 # value range: {Debug\Release\"" }
 set(CMAKE_BUILD_TYPE Debug)
@@ -8,8 +8,8 @@ set(CMAKE_BUILD_TYPE Debug)
 #--------------------------------------------------
 # set global variable
 #--------------------------------------------------
-set(LZRC_BASE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../..")
-set(LZRC_TEST_DIR "${LZRC_BASE_DIR}/tests")
+set(LZRC_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../..")
+set(LZRC_TEST_DIR "${LZRC_SRC_DIR}/tests")
 
 #--------------------------------------------------
 # options

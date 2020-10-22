@@ -26,8 +26,8 @@ typedef struct Encode_Settings {
     S32 (*compFunc)(const BYTE *, const BYTE *);
     U32 maxOffset;                      // 最大的偏移量
     U32 hashValueMask;                  // hash掩码，不用压缩策略有不同的掩码
-    U32 HashKeyMask;                    // 计算hashKey的掩码
-    U32 HashMaskBitWidth;               // hash
+    U32 hashKeyMask;                    // 计算hashKey的掩码
+    U32 hashMaskBitWidth;               // hash
     S32 (*checkRuncode)(const BYTE*);
 } LZ77_Settings;
 
@@ -112,8 +112,8 @@ void InitEncodeSetting(LZ77_Settings *settings, ENCODE_STRATEGY strategy)
         settings->compFunc = CompareData3B;
         settings->maxOffset = WINDOW_SIZE - 1;
         settings->hashValueMask = 0xFFFFFFFF;
-        settings->HashMaskBitWidth = 32;
-        settings->hashNum = HASH_TOTAL_WIDTH / settings->HashMaskBitWidth;
+        settings->hashMaskBitWidth = 32;
+        settings->hashNum = HASH_TOTAL_WIDTH / settings->hashMaskBitWidth;
         settings->bestMinMatchLen = settings->minMatchLen * 2;
         settings->checkRuncode = CheckRuncode3B;
     }
@@ -155,7 +155,7 @@ LZRC_HashNode *AddNewHashkey(const BYTE *data, U32 value, LZRC_HashNode *root, L
 LZ77_Match_Binary GetMatchBinary(BYTE *lookHeadPos, LZRC_HashNode *root, const BYTE *inBuff, LZ77_Settings *settings, U32 leftLen)
 {
     U32 maxMatchLen = leftLen > MAX_LOOK_LEN ? MAX_LOOK_LEN : leftLen;
-    LZRC_HashNode *node = GetNode(settings->hashFunc(*(U32)lookHeadPos), root);
+    LZRC_HashNode *node = GetNode(settings->hashFunc(*(U32*)lookHeadPos), root);
     LZ77_Match_Binary matchBinary;
     matchBinary.matchLen = 0; matchBinary.offset = 0; matchBinary.pos = 0;
     // 没有找到直接返回
@@ -254,7 +254,7 @@ void EncodeTriplet(LZ77_HEAD *head, LZ77_TRIAD triplet, OutputStream *outputStre
                            outputStream,
                            UNSIGNED_CHAR_MAX_VALUE,
                            &(contex->matchLenFreqTable));
-        triplet.matchLen -= UNSIGNED_CHAR_MAX_VALUE；
+        triplet.matchLen -= UNSIGNED_CHAR_MAX_VALUE;
     }
     RCEncodeOneElement(&(contex->encodeContex), outputStream, triplet.matchLen, &(contex->matchLenFreqTable));
 
@@ -298,7 +298,7 @@ S32 LzrcEncodeStream(const BYTE *inBuff, BYTE *outBuff, U32 inLen, U32 outLen, S
     head.srcLen = inLen;
     head.crcCode = 0;
 
-    InitEncodeSetting(*settings, strategy);
+    InitEncodeSetting(&settings, strategy);
     LzrEncodeContex *lzrcContex = ConstructLzrcEncodeContex();
     if (lzrcContex == NULL) {
         return CONSTRUCT_CONTEX_FAILED;
